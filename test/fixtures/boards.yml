@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  layout: MyText
+  turn: 1
+
+two:
+  layout: MyText
+  turn: 1
