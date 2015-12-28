@@ -1,0 +1,19 @@
+!!!
+%html
+  %head
+    %title= "Snake and Ladders Game"#yield(:title)
+    = stylesheet_link_tag "application", :media => "all"
+    = javascript_include_tag "application"
+    = csrf_meta_tags    
+    / = yield(:head)
+  %body
+    %header
+      %h1 Snake and Ladders Game
+    %div.content
+      = yield
+    %footer      
+      %a{:href=>"/snl/app/home"} Application Home
+      |
+      %a{:href=>"/snl"} Snake and Ladders Web Services Documentation
+      |
+      %a{:href=>"http://10.0.1.86"} TAP Utility Server

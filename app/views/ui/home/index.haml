@@ -1,0 +1,18 @@
+%section#landing.hiddenSection
+  %h3 Select a Game Board
+  %div.board-list
+    %ul.board-list
+  %div.create-board-link
+    %a{:href=>"#", :onclick=>"createNewBoard()", :class=>"create-board-link"} Create New Board
+%section#board-details.hiddenSection
+  %h3 Board Layout
+  %div.board-layout
+  %h3 Players
+  %div.player-list
+    %ul.player-list
+  %div.join-link
+  %div.delete-board-link
+%section#join-player-form.hiddenSection
+  %h3 Join Player Form
+  %div.join-player-form
+%script gameList();
