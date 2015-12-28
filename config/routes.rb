@@ -3,6 +3,10 @@ Rails.application.routes.draw do
   scope "/snl" do
     use_doorkeeper
 
+    scope "/app" do
+      resources :home, module: "ui"
+    end
+
     scope "/rest/v1" do
       resources :board, module: "rest/v1", :only=>[:new, :show, :update, :destroy, :index]
       resources :player, module: "rest/v1", :only=>[:create, :show, :update, :destroy]
