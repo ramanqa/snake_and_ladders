@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'sinatra-websocket'
-require 'ostruct'
 
+set :port, 9296
 set :server, 'thin'
 set :sockets, []
 
