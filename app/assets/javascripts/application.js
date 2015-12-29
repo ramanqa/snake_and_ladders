@@ -30,7 +30,8 @@ var loadBoard = function(id){
   $("section.hiddenSection").hide();
   $("ul.player-list").html("");
   $("div.join-link").html("<a href='#' onclick='showJoinBoardForm("+id+")' class='join-link'>Join Board as Player</a>");
-  $("div.delete-board-link").html("<a href='#' onclick='deleteBoard("+id+")' class='delete-board-link'>Delete Board</a>");
+  $("span.delete-board-link").html("<a href='#' onclick='deleteBoard("+id+")' class='delete-board-link'>Delete Board</a>");
+  $("span.reset-board-link").html("<a href='#' onclick='resetBoard("+id+")' class='reset-board-link'>Reset Board</a>");
   $.get("/snl/rest/v1/board/"+id+".json", function(response){
     formatLayout(response.response.board.layout);
     $("div.board-layout").html(response.response.board.layout);
@@ -105,6 +106,18 @@ var deleteBoard = function(id){
     success: function(response) {
         window.location.href = '/snl/app/home';
     }
+  });
+}
+
+var resetBoard = function(boardid){
+  $("section.hiddenSection").hide();
+  $.ajax({
+    type: "PUT",
+    url: "/snl/rest/v1/board/"+boardid+".json",
+    success: function(response){
+      loadBoard(boardid);
+    },
+    dataType: "json"
   });
 }
 

@@ -69,6 +69,10 @@ module ApplicationHelper
     File.delete "./db/board_#{id}.yaml"
   end
 
+  def push_board_updates_to_websockets board_id, data
+    RestClient.put "http://localhost:9296/snl-ws/#{board_id}", data
+  end
+
   def move board_id, player_id
     board = YAML.load_file "./db/board_#{board_id}.yaml"
     roll = rand 1..6

@@ -8,6 +8,7 @@ gem 'doorkeeper'
 gem 'haml'
 gem 'sinatra'
 gem 'sinatra-websocket'
+gem 'rest-client'
 
 gem 'wadl_generator'
 
