@@ -6,6 +6,8 @@ gem 'therubyracer'
 gem 'gyoku'
 gem 'doorkeeper'
 gem 'haml'
+gem 'sinatra'
+gem 'sinatra-websocket'
 
 gem 'wadl_generator'
 
