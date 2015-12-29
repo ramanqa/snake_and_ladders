@@ -39,6 +39,7 @@ class PlayerController < ApplicationController
     else
       response = response_hash -1, "Invalid board id", request.format.symbol
     end
+    push_board_updates_to_websockets request_body['board'], "joined"
     render request.format.symbol => response
   end
 
@@ -66,14 +67,17 @@ class PlayerController < ApplicationController
   def destroy
     expires_now()
     status_code = 200
+    board_id = nil
     begin
       player = Player.find params[:id]
+      board_id = player.board_id
       player.destroy
       response = response_hash 1, {:success=>"OK"}, request.format.symbol       
     rescue Exception => e
       status_code = 500
       response = response_hash -1, e.message, request.format.symbol
     end
+    push_board_updates_to_websockets board_id, "quit"
     render status: status_code, request.format.symbol => response
   end
 

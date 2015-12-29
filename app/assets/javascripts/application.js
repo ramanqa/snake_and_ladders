@@ -16,12 +16,14 @@
 //= require_tree .
 var gameList = function(){
   $.get("/snl/rest/v1/board.json", function(response){
-    $.each(response.response.board, function(index, board){
-      boardLink = "<li>"
-      boardLink = boardLink + "<a href='#' onclick='loadBoard("+board.id+")' id='"+board.id+"' class='board-link'>"+board.layout+"</a>";
-      boardLink = boardLink + "</li>"
-      $("ul.board-list").append(boardLink)
-    });
+    try{
+      $.each(response.response.board, function(index, board){
+        boardLink = "<li>"
+        boardLink = boardLink + "<a href='#' onclick='loadBoard("+board.id+")' id='"+board.id+"' class='board-link'>"+board.layout+"</a>";
+        boardLink = boardLink + "</li>"
+        $("ul.board-list").append(boardLink)
+      });
+    } catch(error) {}
   });
   $("section#landing").show();
 }
@@ -32,11 +34,12 @@ var loadBoard = function(id){
   $("div.join-link").html("<a href='#' onclick='showJoinBoardForm("+id+")' class='join-link'>Join Board as Player</a>");
   $("span.delete-board-link").html("<a href='#' onclick='deleteBoard("+id+")' class='delete-board-link'>Delete Board</a>");
   $("span.reset-board-link").html("<a href='#' onclick='resetBoard("+id+")' class='reset-board-link'>Reset Board</a>");
+  $("span.ws-board-link").html("<a href='#' onclick='showWsBoard("+id+")' class='ws-board-link'>Show Board with WebSocket</a>");
   $.get("/snl/rest/v1/board/"+id+".json", function(response){
     formatLayout(response.response.board.layout);
-    $("div.board-layout").html(response.response.board.layout);
+    // $("div.board-layout").html(response.response.board.layout);
     $.each(response.response.board.players, function(index, player){
-      playerLink = "<li>" + player.name + " | " + player.position
+      playerLink = "<li>" + player.id + " | " + player.name + " | " + player.position
       if(response.response.board.turn === index+1){
         playerLink = playerLink + " | <a href='#' onclick='playTurn("+id+", "+player.id+")' class='play-link' id='"+player.id+"'>Play Turn</a>"
       }
@@ -121,10 +124,82 @@ var resetBoard = function(boardid){
   });
 }
 
-var formatLayout = function(layout){
+var showWsBoard = function(boardid){
+  $("section.hiddenSection").hide();
+  $("div.board-layout-ws").html($("div.board-layout").html());
+  var boardWS = new WebSocket("ws://10.0.1.86/snl-ws/"+boardid);
+  boardWS.onmessage = function(ev){
+    message = JSON.parse(ev.data);
+    $("div.ws-activity-log").prepend("<div>"+(new Date()).toLocaleTimeString() + " - " + message.type+"</div>");
+    formatLayoutWs(message.content);
+  };
+  $("section#board-details-ws").show();
+}
+
+var serializeBoard = function(layout){
   layoutString = layout.split("] [").join("]#_^_#[");
   cells = layoutString.split("#_^_#")
-  $.each(cells, function(index,cell){
-    console.log(cell);
+  board = new Array();
+  $.each(cells, function(index,celldata){
+    cell = new Object();
+    data = celldata.replace("[","").split(" ");
+    cell.place = data[0].split(":")[0];
+    cell.endpoint = data[0].split(":")[1];
+    cell.type = data[1];
+    players = celldata.split(cell.type+" players:[")[1].replace("]]", "").replace(" ", "").split(",");
+    cell.players = new Array;
+    $.each(players, function(index, player){
+      cell.players.push(player);
+    });
+    board.push(cell);
   })
+  return board;
+}
+
+var formatLayout = function(layout){
+  board = serializeBoard(layout);
+  boardHtml = "<table class='board'><tr>";
+  $.each(board, function(index, cell){
+    if(index === 0){
+    }else{
+      if(index%10 === 1){
+        boardHtml = boardHtml + "</tr><tr>";
+      }
+      players = "";
+      if(cell.players == ""){
+        players = "&nbsp;";
+      }else{
+        $.each(cell.players, function(index, player){
+          players = players + "<span class='player-on-board'>"+player+"</span>";
+        });
+      }
+      boardHtml = boardHtml + "<td><div class='position'>"+cell.place+"</div><div class='type'>"+cell.type+"=>"+cell.endpoint+"</div><div class='players'>"+players+"</div></td>";
+    }
+  });
+  boardHtml = boardHtml + "</tr></table>";
+  $("div.board-layout").html(boardHtml);
+}
+
+var formatLayoutWs = function(layout){
+  board = serializeBoard(layout);
+  boardHtml = "<table class='board'><tr>";
+  $.each(board, function(index, cell){
+    if(index === 0){
+    }else{
+      if(index%10 === 1){
+        boardHtml = boardHtml + "</tr><tr>";
+      }
+      players = "";
+      if(cell.players == ""){
+        players = "&nbsp;";
+      }else{
+        $.each(cell.players, function(index, player){
+          players = players + "<span class='player-on-board'>"+player+"</span>";
+        });
+      }
+      boardHtml = boardHtml + "<td><div class='position'>"+cell.place+"</div><div class='type'>"+cell.type+"=>"+cell.endpoint+"</div><div class='players'>"+players+"</div></td>";
+    }
+  });
+  boardHtml = boardHtml + "</tr></table>";
+  $("div.board-layout-ws").html(boardHtml);
 }

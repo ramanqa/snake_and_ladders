@@ -29,6 +29,7 @@ class MoveController < ApplicationController
     else
       response = response_hash -1, "Invalid board id", request.format.symbol
     end
+    push_board_updates_to_websockets params[:id], "played"
     render request.format.symbol => response
   end
 end

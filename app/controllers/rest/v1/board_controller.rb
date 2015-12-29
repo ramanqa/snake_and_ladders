@@ -81,6 +81,7 @@ class BoardController < ApplicationController
     response['board']['id'] = board.id
     response['board']['turn'] = board.turn
     response = response_hash 1, response, request.format.symbol
+    push_board_updates_to_websockets params[:id], "reset"
     render request.format.symbol => response
   end
 
@@ -100,6 +101,7 @@ class BoardController < ApplicationController
       status_code = 500
       response = response_hash -1, e.message, request.format.symbol
     end
+    push_board_updates_to_websockets params[:id], "destroyed"
     render status: status_code, request.format.symbol => response
   end  
 

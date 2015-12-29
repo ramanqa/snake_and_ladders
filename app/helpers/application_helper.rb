@@ -60,7 +60,7 @@ module ApplicationHelper
     board = YAML.load_file "./db/board_#{id}.yaml"
     board_print = ""
     board.each_with_index do |step, index|
-      board_print += "[#{index}:#{step['endpoint']}, #{step['type']}, players:#{step['players']}] "
+      board_print += "[#{index}:#{step['endpoint']} #{step['type']} players:#{step['players']}] "
     end
     board_print
   end
@@ -69,8 +69,15 @@ module ApplicationHelper
     File.delete "./db/board_#{id}.yaml"
   end
 
-  def push_board_updates_to_websockets board_id, data
-    RestClient.put "http://localhost:9296/snl-ws/#{board_id}", data
+  def push_board_updates_to_websockets id, type
+    response = Hash.new
+    response['type'] = type
+    if(type != "destroyed")
+      response['content'] = display_board(id)
+    else
+      response['content'] = "Board destroyed!!"
+    end
+    RestClient.put "http://localhost:9296/snl-ws/#{id}", response.to_json
   end
 
   def move board_id, player_id

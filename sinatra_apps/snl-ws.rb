@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra-websocket'
+require 'json'
 
 set :port, 9296
 set :server, 'thin'
@@ -38,16 +39,21 @@ get '/snl-ws/:board_id' do
       ws.onclose do
         # warn("WS Closed - #{params[:board_id]}")
         settings.sockets.delete(ws)
+        settings.boards[id].delete(ws)
       end
     end
   end
 end
 
 put '/snl-ws/:board_id' do
-  board = request.body.read
+  board = request.body.read  
   if settings.boards[params[:board_id]]
     settings.boards[params[:board_id]].each do |s|
       s.send board
+      if JSON.parse(board)['type'] == "destroyed"
+        # s.close_connection
+        settings.boards[params[:board_id]].delete s
+      end
     end
   end
   "OK"

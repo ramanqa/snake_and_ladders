@@ -198,3 +198,41 @@ footer{
 section.hiddenSection{
   display:none;
 }
+
+table.board{
+  font-size: 0.8em;
+}
+
+table.board td {
+  border: 1px solid #555;
+  background-color: #666;
+  font-weight: 500;
+  color: #ddd;
+  width: 100px;
+  height: 100px;
+  text-align: top;
+}
+
+table.board td div{
+  height: 20px;
+  margin-bottom: 13px;
+}
+table.board td div.type{
+  color: LightGreen;
+}
+
+table.board td div.players{
+  color: LightCoral;
+}
+
+div.ws-activity-log{
+  width: 200px;
+  height: 250px;
+  overflow-y: hidden;
+  background-color: #aaa;
+  border: 2px solid;
+}
+
+span.player-on-board{
+  padding: 2px;
+}
