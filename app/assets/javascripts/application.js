@@ -127,7 +127,7 @@ var resetBoard = function(boardid){
 var showWsBoard = function(boardid){
   $("section.hiddenSection").hide();
   $("div.board-layout-ws").html($("div.board-layout").html());
-  var boardWS = new WebSocket("ws://10.0.1.86/snl-ws/"+boardid);
+  var boardWS = new WebSocket("ws://10.0.1.86:9296/snl-ws/"+boardid);
   boardWS.onmessage = function(ev){
     message = JSON.parse(ev.data);
     $("div.ws-activity-log").prepend("<div>"+(new Date()).toLocaleTimeString() + " - " + message.type+"</div>");
