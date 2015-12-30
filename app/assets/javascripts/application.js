@@ -18,10 +18,13 @@ var gameList = function(){
   $.get("/snl/rest/v1/board.json", function(response){
     try{
       $.each(response.response.board, function(index, board){
-        boardLink = "<li>"
-        boardLink = boardLink + "<a href='#' onclick='loadBoard("+board.id+")' id='"+board.id+"' class='board-link'>"+board.layout+"</a>";
-        boardLink = boardLink + "</li>"
-        $("ul.board-list").append(boardLink)
+        $.get("/snl/rest/v1/board/"+board.id+".json", function(resp){
+          player_count = resp.response.board.players.length
+          boardLink = "<li>";
+          boardLink = boardLink + "<a href='#' onclick='loadBoard("+board.id+")' id='"+board.id+"' class='board-link'><span class='board-id'>Board ID: "+board.id+"</span><span class='player-count'>Total Active Players: "+player_count+"</span></a>";
+          boardLink = boardLink + "</li>"
+          $("ul.board-list").append(boardLink)
+        });
       });
     } catch(error) {}
   });

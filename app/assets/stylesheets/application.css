@@ -236,3 +236,11 @@ div.ws-activity-log{
 span.player-on-board{
   padding: 2px;
 }
+
+span.board-id,span.player-count{
+  padding: 2px;
+}
+
+a{
+  color: #0000cc;
+}
